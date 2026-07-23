@@ -4,7 +4,13 @@
 
 ## Ce que ça fait
 
-Huit questions à un tap, puis un écran de trois champs, puis une lettre assemblée à partir des réponses. Copier, imprimer en PDF, ou copier un bloc de contexte à coller dans ChatGPT ou Claude pour la réécrire dans ses mots.
+Huit questions, un écran final, puis la lettre assemblée à partir des réponses. Copier, imprimer en PDF, ou copier un bloc de contexte à coller dans ChatGPT ou Claude pour la réécrire dans ses mots.
+
+**« Autre » s'écrit sur place.** Sur six des huit questions, un choix « Autre » se transforme en champ de saisie au clic, curseur dedans. Ce qu'elle écrit entre tel quel dans la lettre, à l'endroit qui correspond à la question. Entrée valide.
+
+**Sélection multiple sur les enjeux seulement.** C'est la seule question où une femme en vit plusieurs à la fois — le wiki documente le trio conciliation × culpabilité × charge mentale. Ailleurs, plusieurs réponses casseraient l'assemblage.
+
+**Un seul écran de formulaire.** Les détails de la lettre et les coordonnées étaient deux formulaires consécutifs ; ils sont fusionnés, calqués sur `momentareseau.com/outils`. La signature se déduit du prénom et du nom.
 
 ## Ce qui varie dans la lettre
 
