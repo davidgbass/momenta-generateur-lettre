@@ -90,6 +90,19 @@ body{
 }
 .consent span{font-size:15px;line-height:1.5;opacity:.88}
 .consent span em{font-style:normal;opacity:.6;font-size:13.5px;display:block;margin-top:2px}
+.consent a{color:var(--corail);text-decoration:underline;text-underline-offset:2px}
+
+/* champs sans étiquette, à la manière du formulaire du site */
+.pile{display:flex;flex-direction:column;gap:11px;margin-bottom:22px}
+.pile input{
+  width:100%;font-family:inherit;font-size:16.5px;padding:14px 16px;
+  background:rgba(252,252,250,.07);color:var(--pale);
+  border:1.5px solid rgba(252,252,250,.18);border-radius:3px;
+}
+.pile input::placeholder{color:rgba(252,252,250,.34)}
+.pile input:focus{outline:none;border-color:var(--corail);background:rgba(252,252,250,.1)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media(max-width:520px){.duo{grid-template-columns:1fr}}
 
 .legal{
   font-size:13px;line-height:1.6;opacity:.5;margin:22px 0 4px;
@@ -453,38 +466,49 @@ function rendreCoordonnees(){
   scene.innerHTML =
     '<div class="etape">' +
       '<div class="q">Ta lettre est prête</div>' +
-      '<div class="aide">Veux-tu qu\'on te l\'envoie, avec la page d\'impact à joindre en PDF&nbsp;?</div>' +
-      '<div class="grille">' +
-        '<div class="ch"><label for="c-mail">Ton courriel</label><input id="c-mail" type="email" placeholder="prenom@exemple.com" autocomplete="email"></div>' +
-        '<div class="ch"><label for="c-org">Ton organisation <span style="text-transform:none;letter-spacing:0;font-weight:400">(facultatif)</span></label><input id="c-org" type="text" placeholder="Nom de l\'employeur" autocomplete="organization"></div>' +
+      '<div class="aide">On te l\'envoie, avec la page d\'impact à joindre en PDF.</div>' +
+      '<div class="pile">' +
+        '<div class="duo">' +
+          '<input id="c-prenom" type="text" placeholder="Prénom" autocomplete="given-name">' +
+          '<input id="c-nom" type="text" placeholder="Nom de famille" autocomplete="family-name">' +
+        '</div>' +
+        '<input id="c-tel" type="tel" placeholder="Téléphone" autocomplete="tel">' +
+        '<input id="c-mail" type="email" placeholder="Courriel" autocomplete="email">' +
+        '<input id="c-org" type="text" placeholder="Ton organisation (facultatif)" autocomplete="organization">' +
       '</div>' +
-      '<label class="consent"><input type="checkbox" id="k-envoi"><span>Envoyez-moi ma lettre et la page d\'impact par courriel.</span></label>' +
+      '<label class="consent"><input type="checkbox" id="k-envoi"><span>J\'accepte les <a href="https://momentareseau.com/termsandconditions" target="_blank" rel="noopener">termes et conditions</a>.</span></label>' +
       '<label class="consent"><input type="checkbox" id="k-info"><span>Je veux aussi recevoir les nouvelles de Momenta.<em>Les cohortes, les webinaires gratuits. Je peux me désabonner en tout temps, en un clic.</em></span></label>' +
-      '<div style="margin-top:22px"><button class="btn" id="b-envoyer" disabled>Recevoir ma lettre</button></div>' +
+      '<div style="margin-top:22px"><button class="btn" id="b-envoyer" disabled>Je reçois ma lettre</button></div>' +
       '<button class="sauter" id="b-sauter">Voir ma lettre sans donner mes coordonnées</button>' +
-      '<p class="legal">Momenta Réseau inc. recueille ton courriel, tes réponses au questionnaire et, si tu le fournis, le nom de ton organisation — pour t\'envoyer ta lettre et comprendre les besoins des femmes qui utilisent l\'outil. Rien n\'est partagé avec un tiers. Tu peux demander de retirer tes données ou de retirer ton consentement en tout temps en écrivant à Momenta.</p>' +
+      '<p class="legal">Momenta Réseau inc. recueille tes coordonnées et tes réponses au questionnaire — pour t\'envoyer ta lettre et comprendre les besoins des femmes qui utilisent l\'outil. Rien n\'est partagé avec un tiers. Tu peux retirer ton consentement ou demander la suppression de tes données en tout temps.</p>' +
       '<p class="demo">Démonstration — aucune donnée n\'est transmise ni conservée.</p>' +
       '<button class="retour">← retour</button>' +
     '</div>';
 
-  var mail = document.getElementById('c-mail');
+  var val = function(id){ return document.getElementById(id).value.trim(); };
   var kEnvoi = document.getElementById('k-envoi');
   var bouton = document.getElementById('b-envoyer');
+  var requis = ['c-prenom','c-nom','c-tel','c-mail'];
 
   function valider(){
-    var ok = kEnvoi.checked && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.value.trim());
-    bouton.disabled = !ok;
+    var pleins = requis.every(function(id){ return val(id).length > 1; });
+    var courrielOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('c-mail'));
+    var telOk = (val('c-tel').replace(/\D/g,'').length >= 10);
+    bouton.disabled = !(pleins && courrielOk && telOk && kEnvoi.checked);
   }
-  mail.addEventListener('input', valider);
+  requis.forEach(function(id){ document.getElementById(id).addEventListener('input', valider); });
   kEnvoi.addEventListener('change', valider);
 
   bouton.addEventListener('click', function(){
     bouton.disabled = true;
     bouton.textContent = 'Un instant…';
     envoyerVersCRM({
-      courriel: mail.value.trim(),
-      organisation: document.getElementById('c-org').value.trim() || null,
-      consentement_envoi: true,
+      prenom: val('c-prenom'),
+      nom: val('c-nom'),
+      telephone: val('c-tel'),
+      courriel: val('c-mail'),
+      organisation: val('c-org') || null,
+      consentement_termes: true,
       consentement_infolettre: document.getElementById('k-info').checked,
       reponses: rep,
       source: 'generateur-lettre-employeur'
