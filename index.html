@@ -299,6 +299,7 @@ var LIBELLES = {
 
   /* — transversaux — */
   avancer:       {t:"Je veux continuer à avancer, pas juste tenir",         sous:"Reprendre ma progression"},
+  avancer_avant: {t:"Je veux continuer à avancer, pas juste tenir",         sous:"Que ma carrière ne se mette pas sur pause en même temps que moi"},
   clarte:        {t:"Je ne sais plus trop où je m'en vais",                 sous:"Y voir clair sur ma prochaine étape"},
   sens:          {t:"Je me demande si je suis encore à la bonne place",     sous:"Revalider ma trajectoire, ou la changer"},
   reseau:        {t:"Je me sens pas mal seule là-dedans",                   sous:"Un réseau de femmes qui vivent la même chose"}
@@ -308,7 +309,7 @@ var LIBELLES = {
    Une femme enceinte n'est pas encore confrontée au retour ; une femme
    revenue depuis un an n'a plus de départ à préparer. */
 var PAR_PHASE = {
-  enceinte:  ['annonce','depart','pause','avancer'],
+  enceinte:  ['annonce','depart','pause','avancer_avant'],
   conge:     ['plan','place_futur','charge','reseau'],
   retour6:   ['place','charge','limites','reseau'],
   retour12:  ['encore','clarte','place','charge'],
@@ -397,6 +398,11 @@ var ENJEU = {
     mesure:"leur gestion de la charge mentale passer de 4,6 à 7,1 sur 10",
     employeur:"Ce que ça veut dire pour l'organisation : une employée qui dit clairement ce qu'elle peut porter est plus fiable qu'une qui accepte tout et décroche six mois plus tard."
   },
+  avancer_avant:{
+    veut:"continuer à progresser plutôt que de voir ma carrière se mettre sur pause en même temps que moi",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une employée qui revient au niveau où elle était partie, prête à reprendre. C'est précisément à ce moment-ci que les organisations perdent leurs candidates à la relève."
+  },
   avancer:{
     veut:"reprendre ma progression, pas seulement recoller les morceaux",
     mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
@@ -454,11 +460,29 @@ var CLIMAT = {
 
 var RECADRAGE = "Ce n'est pas un accompagnement de retour au travail. C'est un parcours de développement du leadership de cinq mois, animé par des sommités québécoises — à la dernière cohorte, Sonia Lupien sur les mécanismes du stress, Lory Zéphyr sur la charge mentale, Marylise Champagne sur la légitimité professionnelle — et bâti autour d'un réseau de professionnelles qui traversent la même transition.";
 
+/* Deux temps : celle qui n'est pas encore revenue parle au futur. */
 var GESTION = {
-  equipe: "À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je fais partie de celles qui dirigent une équipe : ce qui se travaille là se répercute directement sur les personnes que je gère.",
-  projets:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets, comme moi.",
-  lesdeux:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je porte les deux : ce qui se travaille là se répercute sur mon équipe autant que sur mes dossiers.",
-  non:    "À la dernière cohorte, 78 % des participantes occupaient des responsabilités de gestion. Ce n'est pas un groupe de soutien, c'est un milieu de professionnelles."
+  avenir:{
+    equipe: "À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je retrouverai la mienne à mon retour : ce qui se travaille là se répercutera directement sur les personnes que je gère.",
+    projets:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets, comme moi.",
+    lesdeux:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je porte les deux : ce qui se travaille là se répercutera sur mon équipe autant que sur mes dossiers.",
+    non:    "À la dernière cohorte, 78 % des participantes occupaient des responsabilités de gestion. Ce n'est pas un groupe de soutien, c'est un milieu de professionnelles."
+  },
+  present:{
+    equipe: "À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je fais partie de celles qui dirigent une équipe : ce qui se travaille là se répercute directement sur les personnes que je gère.",
+    projets:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets, comme moi.",
+    lesdeux:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je porte les deux : ce qui se travaille là se répercute sur mon équipe autant que sur mes dossiers.",
+    non:    "À la dernière cohorte, 78 % des participantes occupaient des responsabilités de gestion. Ce n'est pas un groupe de soutien, c'est un milieu de professionnelles."
+  }
+};
+
+/* La logistique change complètement selon qu'elle sera au travail ou non
+   pendant le parcours (30 septembre → début février). C'est même l'argument
+   le plus fort pour celle qui part : ça ne coûte aucune heure de travail. */
+var LOGISTIQUE = {
+  enceinte:"Le parcours va du 30 septembre au début février. Selon la date de mon départ, une partie se fera pendant que je travaille encore — deux heures aux dix jours, sur l'heure du midi — et le reste pendant mon congé, sans aucun coût en heures de travail pour l'organisation.",
+  conge:   "Le parcours va du 30 septembre au début février : l'essentiel se déroulera donc pendant mon congé, sans coûter d'heures de travail à l'organisation. Ce qui déborde sur mon retour représente deux heures aux dix jours, sur l'heure du midi, et toutes les séances sont enregistrées.",
+  present: "Le parcours va du 30 septembre au début février : deux heures aux dix jours, sur l'heure du midi, toutes les séances enregistrées. Je ne m'absente pas de mes dossiers."
 };
 
 var SECTEUR = {
@@ -471,6 +495,12 @@ var DEMANDE = {
   tout:   "Je vous demande de financer ma participation.",
   partage:"Je vous propose qu'on partage le coût : l'organisation en assume une partie, moi l'autre.",
   temps:  "Je financerai le parcours moi-même. Ce que je vous demande, c'est votre accord pour le temps."
+};
+
+/* Demander « l'accord pour le temps » n'a pas de sens quand le parcours se
+   déroule pendant le congé : il n'y a pas d'heures de travail à libérer. */
+var DEMANDE_AVANT_RETOUR = {
+  temps:"Je financerai le parcours moi-même. Ce que je vous demande, c'est votre appui — et qu'on convienne ensemble de la façon dont ce que j'y aurai travaillé servira à mon retour."
 };
 
 var CLOTURE = {
@@ -500,7 +530,9 @@ function assembler(r){
     : OUVERTURE[r.moment].replace('{mois}', r.mois);
   p.push(ouv + (CLIMAT[r.climat] || ""));
 
-  p.push(RECADRAGE + " " + (GESTION[r.gestion] || GESTION.non));
+  var avantRetour = (r.moment === 'enceinte' || r.moment === 'conge');
+  var tempsGestion = avantRetour ? GESTION.avenir : GESTION.present;
+  p.push(RECADRAGE + " " + (tempsGestion[r.gestion] || tempsGestion.non));
 
   /* secteur */
   if (r.secteur === 'juridique' || r.secteur === 'finance') p.push(SECTEUR[r.secteur]);
@@ -525,13 +557,17 @@ function assembler(r){
          ". Et 91 % d'entre elles estiment que leur organisation bénéficierait du programme.");
   p.push(pivot.employeur);
 
-  var calcul = "Le coût est de 1 495 $, comparé aux quelque 30 000 $ que coûte en moyenne le départ d'une employée au Canada. Le parcours est reconnu par l'Ordre des CRHA pour 14 heures de formation continue — il est admissible au budget de formation";
+  /* « départ » serait ambigu pour une femme sur le point de partir en congé :
+     on dit explicitement qu'il s'agit d'une employée qui ne revient pas. */
+  var calcul = "Le coût est de 1 495 $, comparé aux quelque 30 000 $ que coûte en moyenne le remplacement d'une employée qui ne revient pas. Le parcours est reconnu par l'Ordre des CRHA pour 14 heures de formation continue — il est admissible au budget de formation";
   p.push(calcul + (grosse ? " et se comptabilise sous la loi du 1 %." : "."));
 
   if (r.destinataire === 'rh' || r.destinataire === 'lesdeux') p.push(LIGNE_RH);
 
-  var dem = (r.demande === 'autre') ? (texteAutre(r,'demande') || DEMANDE.tout) : DEMANDE[r.demande];
-  p.push(dem + " Le parcours va du 30 septembre au début février : deux heures aux dix jours, sur l'heure du midi, toutes les séances enregistrées. Je ne m'absente pas de mes dossiers.");
+  var dem = (r.demande === 'autre')
+    ? (texteAutre(r,'demande') || DEMANDE.tout)
+    : ((avantRetour && DEMANDE_AVANT_RETOUR[r.demande]) || DEMANDE[r.demande]);
+  p.push(dem + " " + (LOGISTIQUE[r.moment] || LOGISTIQUE.present));
 
   p.push(CLOTURE[r.destinataire] || CLOTURE.autre);
   if (r.format === 'lettre') p.push("Merci de votre considération.");
