@@ -22,9 +22,17 @@ Huit questions à un tap, puis un écran de trois champs, puis une lettre assemb
 
 Environ 2 000 combinaisons. Tout se génère dans le navigateur.
 
-## Ce qui n'y est pas
+## La capture de coordonnées
 
-**Aucune collecte de données.** Rien ne quitte le navigateur, aucun appel réseau sauf la police Montserrat. C'est une démo : la capture de courriel (vers GoHighLevel, avec double consentement Loi 25 / anti-pourriel, après la génération de la lettre et jamais avant) reste à décider.
+Écran 10, entre les champs et la lettre — au moment où la femme est le plus motivée, jamais avant.
+
+- **Champs** : courriel (requis), organisation (facultatif — c'est la donnée la plus précieuse pour le pipeline B2B).
+- **Deux consentements distincts, aucun pré-coché.** Le premier pour recevoir la lettre, le second pour les communications de Momenta. Les fusionner serait attaquable sous la loi anti-pourriel.
+- **Le bouton reste inactif** tant que le courriel n'est pas valide et le premier consentement non donné.
+- **Un lien « Voir ma lettre sans donner mes coordonnées »**, visible, qui mène directement au résultat. Sous la Loi 25, un consentement obtenu en échange du service est un consentement fragile — et un mur devant le livrable ferait décrocher la moitié des femmes.
+- **Avis de collecte en français clair**, à côté des cases : qui recueille, quoi (y compris les réponses au questionnaire), pourquoi, et comment retirer son consentement.
+
+**Rien n'est transmis en démo.** La constante `ENDPOINT` est à `null` et un bandeau discret le dit à l'écran. Pour activer : y mettre l'URL du webhook GoHighLevel, la charge utile est déjà formée (courriel, organisation, les deux consentements, toutes les réponses, la source).
 
 **Les secteurs sans données réelles.** Le wiki n'a de munitions solides que pour le juridique. La finance reçoit un argument fondé mais général ; les quatre autres secteurs reçoivent la donnée canadienne. Rien n'est inventé, mais la promesse de spécificité sectorielle n'est tenue que pour un secteur sur sept.
 
