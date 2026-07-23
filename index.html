@@ -52,6 +52,31 @@ body{
 }
 .retour:hover{opacity:.8}
 
+/* ---------- précision dans ses mots ---------- */
+.plus{
+  display:inline-flex;align-items:center;gap:7px;margin-top:18px;
+  background:none;border:none;color:var(--corail);font-family:inherit;
+  font-size:14.5px;font-weight:600;cursor:pointer;padding:6px 0;
+}
+.plus:hover{opacity:.8}
+.plus .croix{font-size:17px;line-height:1;transition:transform .18s}
+.plus.ouvert .croix{transform:rotate(45deg)}
+.boite{display:none;margin-top:12px}
+.boite.ouvert{display:block;animation:entre .22s ease}
+.boite textarea{
+  width:100%;font-family:inherit;font-size:16px;line-height:1.55;padding:14px 16px;
+  background:rgba(252,252,250,.07);color:var(--pale);resize:vertical;min-height:92px;
+  border:1.5px solid rgba(252,252,250,.18);border-radius:3px;
+}
+.boite textarea::placeholder{color:rgba(252,252,250,.32)}
+.boite textarea:focus{outline:none;border-color:var(--corail);background:rgba(252,252,250,.1)}
+.boite .indice{font-size:13px;opacity:.45;margin-top:8px}
+.pastille{
+  display:inline-block;margin-left:8px;font-size:11.5px;font-weight:700;
+  background:var(--corail);color:var(--vert);padding:2px 8px;border-radius:20px;
+  letter-spacing:.03em;vertical-align:middle;
+}
+
 /* ---------- champs ---------- */
 .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
 .ch label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:6px}
@@ -228,15 +253,10 @@ var QUESTIONS = [
   },
   {
     cle:'enjeu',
-    q:"Qu'est-ce que tu veux travailler en priorité&nbsp;?",
-    aide:"C'est ce qui sera mis en avant dans la lettre.",
-    options:[
-      {v:'posture', t:"Ma posture de gestion"},
-      {v:'clarte',  t:"Savoir où je m'en vais"},
-      {v:'charge',  t:"Tenir un rôle exigeant sans m'épuiser"},
-      {v:'confiance',t:"Ma confiance professionnelle"},
-      {v:'reseau',  t:"Ne pas traverser ça seule"}
-    ]
+    q:"Qu'est-ce qui te ressemble le plus en ce moment&nbsp;?",
+    aide:"Ce sont les mots des femmes qui ont fait le parcours avant toi.",
+    invite:"Dis-le dans tes mots si aucun choix ne colle tout à fait…",
+    options:function(r){ return optionsEnjeu(r); }
   },
   {
     cle:'climat',
@@ -279,7 +299,7 @@ var CLIMAT = {
   pasdutout: " Je sais que ce type de demande n'est pas courant chez nous. Je la formule donc sur la base de ce qui est documenté, pas d'un ressenti."
 };
 
-var RECADRAGE = "Ce n'est pas un accompagnement de retour au travail. C'est un parcours de développement du leadership de cinq mois, animé par des sommités québécoises — Sonia Lupien sur les mécanismes du stress, Lory Zéphyr sur la charge mentale, Marylise Champagne sur la légitimité professionnelle — et bâti autour d'un réseau de professionnelles qui traversent la même transition.";
+var RECADRAGE = "Ce n'est pas un accompagnement de retour au travail. C'est un parcours de développement du leadership de cinq mois, animé par des sommités québécoises — à la dernière cohorte, Sonia Lupien sur les mécanismes du stress, Lory Zéphyr sur la charge mentale, Marylise Champagne sur la légitimité professionnelle — et bâti autour d'un réseau de professionnelles qui traversent la même transition.";
 
 var GESTION = {
   equipe: "À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je fais partie de celles qui dirigent une équipe : ce qui se travaille là se répercute directement sur les personnes que je gère.",
@@ -293,12 +313,114 @@ var SECTEUR = {
   autre:    "Au Canada, 70 % des femmes ne reçoivent aucun soutien ni accommodement particulier à leur retour de congé parental. C'est l'angle mort que ce parcours vient combler."
 };
 
+/* ------------------------------------------------------------
+   LES ENJEUX — croisés phase × défi
+   Le wiki Momenta (Segments-comportementaux.md) est explicite : la segmentation
+   doit croiser la PHASE (congé / retour récent / emploi) et le DÉFI, pas le défi
+   seul. Chaque phase reçoit donc son propre jeu de choix, dans les mots relevés
+   dans les sondages d'inscription (n=40), non-inscrites (n=31) et post-cohorte (n=22).
+   ------------------------------------------------------------ */
+var LIBELLES = {
+  annonce: {t:"Annoncer ma grossesse me stresse plus que ça devrait", sous:"En parler à mon employeur sans me diminuer"},
+  pause:   {t:"J'ai peur que mon congé me coûte ma progression",      sous:"Ne pas perdre le terrain que j'ai gagné"},
+  plan:    {t:"Je n'ai aucun plan pour mon retour",                   sous:"Revenir avec une structure, pas à l'aveugle"},
+  place:   {t:"Je ne me sens plus tout à fait à ma place",            sous:"Retrouver ma légitimité professionnelle"},
+  charge:  {t:"La charge mentale me gruge",                           sous:"Tenir un rôle exigeant sans m'épuiser"},
+  limites: {t:"Je n'arrive pas à faire respecter mes limites",        sous:"Poser un cadre et le tenir, sans culpabilité"},
+  avancer: {t:"Je veux continuer à avancer, pas juste tenir",         sous:"Reprendre ma progression, pas seulement recoller les morceaux"},
+  clarte:  {t:"Je ne sais plus trop où je m'en vais",                 sous:"Y voir clair sur ma prochaine étape"},
+  encore:  {t:"Je suis revenue depuis un bout, et ça ne va toujours pas", sous:"Ce n'est pas réglé juste parce que je suis rentrée"},
+  sens:    {t:"Je me demande si je suis encore à la bonne place",     sous:"Revalider ma trajectoire, ou la changer"},
+  reseau:  {t:"Je me sens pas mal seule là-dedans",                   sous:"Un réseau de femmes qui vivent la même chose"},
+  posture: {t:"Je gère une équipe et je ne me sens plus solide",      sous:"Retrouver ma posture de gestionnaire"},
+  pilotage:{t:"Je porte des dossiers et je n'ai plus le même souffle",sous:"Retrouver ma capacité à mener des mandats exigeants"}
+};
+
+/* Quels choix, selon où elle en est. */
+var PAR_PHASE = {
+  enceinte:  ['annonce','pause','plan','avancer','reseau'],
+  conge:     ['plan','place','pause','charge','reseau'],
+  retour6:   ['place','charge','limites','avancer','reseau'],
+  retour12:  ['encore','clarte','place','avancer','charge'],
+  retourplus:['sens','clarte','avancer','encore','reseau']
+};
+
+function optionsEnjeu(r){
+  var liste = (PAR_PHASE[r.moment] || PAR_PHASE.retour6).slice();
+  // la responsabilité de gestion passe devant : c'est l'angle le plus fort pour l'employeur
+  if (r.gestion === 'equipe')  liste.unshift('posture');
+  if (r.gestion === 'projets') liste.unshift('pilotage');
+  return liste.map(function(v){
+    return {v:v, t:LIBELLES[v].t, sous:LIBELLES[v].sous};
+  });
+}
+
 var ENJEU = {
-  posture:  {veut:"ma posture de gestion",                              mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10"},
-  clarte:   {veut:"la clarté sur la suite de ma trajectoire",           mesure:"leur clarté sur leur prochaine étape professionnelle passer de 4,9 à 7,3 sur 10"},
-  charge:   {veut:"ma capacité à tenir un rôle exigeant sans m'épuiser",mesure:"leur gestion de la charge mentale passer de 4,6 à 7,1 sur 10"},
-  confiance:{veut:"ma confiance dans ce que je vaux professionnellement",mesure:"leur confiance en leur valeur professionnelle passer de 6,6 à 8,2 sur 10"},
-  reseau:   {veut:"de ne pas traverser cette période isolée",           mesure:"leur sentiment d'être soutenues passer de 4,3 à 8,1 sur 10 — le gain le plus important du parcours"}
+  annonce:{
+    veut:"aborder mon congé avec l'organisation sans avoir l'impression de m'excuser",
+    mesure:"leur confiance en leur valeur professionnelle passer de 6,6 à 8,2 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une transition annoncée tôt et planifiée à deux, plutôt qu'un départ qu'on apprend tard et qu'on absorbe dans l'urgence."
+  },
+  pause:{
+    veut:"m'assurer que ce congé ne me coûte pas le terrain professionnel que j'ai gagné",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une employée qui revient au niveau où elle était partie. C'est précisément à ce moment-ci que les organisations perdent leurs candidates à la relève."
+  },
+  plan:{
+    veut:"arriver à mon retour avec un vrai plan plutôt qu'en improvisant",
+    mesure:"leur clarté sur leur prochaine étape professionnelle passer de 4,9 à 7,3 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : 47 % des Canadiennes affirment qu'un plan de transition aurait amélioré leur retour. À la dernière cohorte, un atelier complet y était consacré — et le plan se construit à deux, avec vous."
+  },
+  place:{
+    veut:"retrouver pleinement ma place professionnelle",
+    mesure:"leur confiance en leur valeur professionnelle passer de 6,6 à 8,2 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une employée qui redevient pleinement opérationnelle en quelques semaines, plutôt qu'une reprise qui s'étire sur plusieurs mois."
+  },
+  charge:{
+    veut:"apprendre à tenir un rôle exigeant sans m'épuiser",
+    mesure:"leur gestion de la charge mentale passer de 4,6 à 7,1 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une mesure de prévention. L'épuisement au retour de congé parental est un risque psychosocial documenté, et c'est exactement ce que le parcours travaille."
+  },
+  limites:{
+    veut:"apprendre à poser un cadre de travail tenable et à le faire respecter",
+    mesure:"leur gestion de la charge mentale passer de 4,6 à 7,1 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une employée qui dit clairement ce qu'elle peut porter est plus fiable qu'une qui accepte tout et décroche six mois plus tard."
+  },
+  avancer:{
+    veut:"reprendre ma progression, pas seulement recoller les morceaux",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : garder une employée en progression plutôt qu'en retrait. C'est exactement à ce moment-ci que les organisations perdent leurs candidates à la relève."
+  },
+  clarte:{
+    veut:"y voir clair sur ma prochaine étape professionnelle",
+    mesure:"leur clarté sur leur prochaine étape professionnelle passer de 4,9 à 7,3 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une employée qui sait ce qu'elle veut construire ici, plutôt qu'une qui finit par aller chercher la réponse ailleurs."
+  },
+  encore:{
+    veut:"régler ce qui ne s'est pas réglé tout seul depuis mon retour",
+    mesure:"leur sentiment d'être soutenues passer de 4,3 à 8,1 sur 10 — le plus grand gain du parcours",
+    employeur:"Ce que ça veut dire pour l'organisation : on ne parle plus de prévention mais de rattrapage, et c'est encore le moment le moins cher pour agir. Une difficulté qui dure au-delà d'un an finit rarement autrement que par un départ."
+  },
+  sens:{
+    veut:"revalider que je suis à la bonne place, et à quelles conditions",
+    mesure:"leur clarté sur leur prochaine étape professionnelle passer de 4,9 à 7,3 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : cette question-là se règle avec vous ou sans vous. Financer le parcours, c'est faire partie de la réponse."
+  },
+  reseau:{
+    veut:"ne pas traverser cette période isolée",
+    mesure:"leur sentiment d'être soutenues passer de 4,3 à 8,1 sur 10 — le plus grand gain du parcours",
+    employeur:"Ce que ça veut dire pour l'organisation : le réseau de pairs est ce que les participantes classent en tête de ce qui leur a apporté de la valeur. C'est ce qui fait que les acquis tiennent au-delà du parcours."
+  },
+  posture:{
+    veut:"retrouver ma solidité comme gestionnaire",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : ce n'est pas seulement moi qui en bénéficie. Tout ce qui se travaille là se répercute sur les personnes que je gère."
+  },
+  pilotage:{
+    veut:"retrouver ma capacité à porter des mandats exigeants",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : les dossiers que je porte avancent au rythme prévu, plutôt qu'au rythme de ce que j'arrive à absorber."
+  }
 };
 
 var DEMANDE = {
@@ -322,18 +444,27 @@ var LIGNE_RH = "Deux éléments qui vous concernent directement : la reconnaissa
 function assembler(r){
   var p = [];
   var grosse = (r.taille === 'moyenne' || r.taille === 'grande' || r.taille === 'tres');
+  var n = r.notes || {};
+
+  // insère la précision écrite par la femme, dans ses mots, si elle en a laissé une
+  var mot = function(cle){ if (n[cle]) p.push(n[cle]); };
 
   p.push("Bonjour " + r.prenomDest + ",");
 
   p.push(OUVERTURE[r.moment].replace('{mois}', r.mois) + CLIMAT[r.climat]);
+  mot('moment'); mot('climat');
 
   p.push(RECADRAGE + " " + GESTION[r.gestion]);
+  mot('gestion');
 
   p.push(SECTEUR[r.secteur] || SECTEUR.autre);
+  mot('secteur'); mot('taille');
 
   p.push("Ce que je veux travailler en priorité, c'est " + ENJEU[r.enjeu].veut +
          ". Les participantes de la dernière cohorte ont mesuré " + ENJEU[r.enjeu].mesure +
          ". Et 91 % d'entre elles estiment que leur organisation bénéficierait du programme.");
+  mot('enjeu');
+  p.push(ENJEU[r.enjeu].employeur);
 
   var calcul = "Le coût est de 1 495 $, comparé aux quelque 30 000 $ que coûte en moyenne le départ d'une employée au Canada. Le parcours est reconnu par l'Ordre des CRHA pour 14 heures de formation continue — il est admissible au budget de formation";
   calcul += grosse ? " et se comptabilise sous la loi du 1 %." : ".";
@@ -342,6 +473,7 @@ function assembler(r){
   if (r.destinataire === 'rh' || r.destinataire === 'lesdeux') p.push(LIGNE_RH);
 
   p.push(DEMANDE[r.demande] + " Le parcours va du 30 septembre au début février : deux heures aux dix jours, sur l'heure du midi, toutes les séances enregistrées. Je ne m'absente pas de mes dossiers.");
+  mot('demande'); mot('destinataire'); mot('libre');
 
   p.push(CLOTURE[r.destinataire]);
 
@@ -358,7 +490,8 @@ function assembler(r){
 function contexteIA(r){
   var lib = function(cle, v){
     var q = QUESTIONS.filter(function(x){return x.cle===cle;})[0];
-    var o = q.options.filter(function(x){return x.v===v;})[0];
+    var liste = (typeof q.options === 'function') ? q.options(r) : q.options;
+    var o = liste.filter(function(x){return x.v===v;})[0];
     return o ? o.t : v;
   };
   return "Voici le contexte. Réécris la lettre ci-dessous dans mes mots, sans changer les chiffres ni les faits.\n\n"
@@ -375,8 +508,41 @@ function contexteIA(r){
 /* ============================================================
    INTERFACE
    ============================================================ */
-var rep = {}, pas = 0;
+var rep = {notes:{}}, pas = 0;
 var TOTAL = QUESTIONS.length + 2;
+
+/* Bloc « précision dans mes mots » — disponible sur chaque écran.
+   Ce que la femme écrit entre tel quel dans la lettre, à l'endroit qui lui
+   correspond. Rien n'est reformulé. */
+function blocPrecision(cle, invite){
+  var v = rep.notes[cle] || '';
+  return '<button class="plus' + (v ? ' ouvert' : '') + '" data-cible="' + cle + '">' +
+           '<span class="croix">+</span> Ajouter une précision dans mes mots' +
+           (v ? '<span class="pastille">ajoutée</span>' : '') +
+         '</button>' +
+         '<div class="boite' + (v ? ' ouvert' : '') + '" id="boite-' + cle + '">' +
+           '<textarea id="note-' + cle + '" placeholder="' + invite + '">' + v + '</textarea>' +
+           '<p class="indice">Écrit dans tes mots. Ça entrera tel quel dans ta lettre.</p>' +
+         '</div>';
+}
+
+function brancherPrecision(cle){
+  var btn = scene.querySelector('.plus[data-cible="' + cle + '"]');
+  if (!btn) return;
+  var boite = document.getElementById('boite-' + cle);
+  btn.addEventListener('click', function(){
+    btn.classList.toggle('ouvert');
+    boite.classList.toggle('ouvert');
+    if (boite.classList.contains('ouvert')) document.getElementById('note-' + cle).focus();
+  });
+}
+
+function saisirPrecision(cle){
+  var champ = document.getElementById('note-' + cle);
+  if (!champ) return;
+  var v = champ.value.trim();
+  if (v) rep.notes[cle] = v; else delete rep.notes[cle];
+}
 var scene = document.getElementById('scene');
 var app = document.getElementById('app');
 
@@ -411,25 +577,36 @@ function envoyerVersCRM(donnees){
 }
 
 function rendreQuestion(Q){
+  var choix = (typeof Q.options === 'function') ? Q.options(rep) : Q.options;
   var h = '<div class="etape"><div class="q">' + Q.q + '</div>' +
           '<div class="aide">' + Q.aide + '</div><div class="choix">';
-  Q.options.forEach(function(o, i){
+  choix.forEach(function(o, i){
     h += '<button class="opt" data-v="' + o.v + '">' + o.t +
          (o.sous ? '<span class="sous">' + o.sous + '</span>' : '') + '</button>';
   });
   h += '</div>';
+  h += blocPrecision(Q.cle, Q.invite || "Ce que tu veux ajouter, dans tes mots…");
   if (pas > 0) h += '<button class="retour">← retour</button>';
   h += '</div>';
   scene.innerHTML = h;
 
   scene.querySelectorAll('.opt').forEach(function(b){
     b.addEventListener('click', function(){
+      saisirPrecision(Q.cle);
       rep[Q.cle] = b.dataset.v;
+      // Si elle revient changer sa phase ou sa gestion, l'enjeu déjà choisi
+      // peut ne plus exister dans la nouvelle liste — on l'efface pour qu'elle
+      // repasse par l'écran plutôt que de traîner un choix orphelin.
+      if ((Q.cle === 'moment' || Q.cle === 'gestion') && rep.enjeu){
+        var encoreLa = optionsEnjeu(rep).some(function(o){ return o.v === rep.enjeu; });
+        if (!encoreLa) delete rep.enjeu;
+      }
       pas++; rendre();
     });
   });
+  brancherPrecision(Q.cle);
   var r = scene.querySelector('.retour');
-  if (r) r.addEventListener('click', function(){ pas--; rendre(); });
+  if (r) r.addEventListener('click', function(){ saisirPrecision(Q.cle); pas--; rendre(); });
 }
 
 function rendreChamps(){
@@ -447,11 +624,15 @@ function rendreChamps(){
         '<button class="opt" data-f="courriel">Un courriel<span class="sous">Avec une ligne d\'objet, prêt à envoyer</span></button>' +
         '<button class="opt" data-f="lettre">Une lettre<span class="sous">Format plus formel, sans objet</span></button>' +
       '</div>' +
+      blocPrecision('libre', "Un dernier mot pour ton employeur — un projet en cours, une entente déjà prise, ce que tu veux qu'il retienne…") +
       '<button class="retour">← retour</button>' +
     '</div>';
 
+  brancherPrecision('libre');
+
   scene.querySelectorAll('.opt').forEach(function(b){
     b.addEventListener('click', function(){
+      saisirPrecision('libre');
       rep.prenomDest = document.getElementById('c-dest').value.trim() || '[Prénom]';
       rep.mois       = document.getElementById('c-mois').value.trim() || '[mois]';
       rep.signature  = document.getElementById('c-sign').value.trim() || '[Ta signature]';
@@ -459,7 +640,7 @@ function rendreChamps(){
       pas++; rendre();
     });
   });
-  scene.querySelector('.retour').addEventListener('click', function(){ pas--; rendre(); });
+  scene.querySelector('.retour').addEventListener('click', function(){ saisirPrecision('libre'); pas--; rendre(); });
 }
 
 function rendreCoordonnees(){
