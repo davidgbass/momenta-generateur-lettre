@@ -4,7 +4,7 @@
 
 ## Ce que ça fait
 
-Huit questions, un écran final, puis la lettre assemblée à partir des réponses. Copier, imprimer en PDF, ou copier un bloc de contexte à coller dans ChatGPT ou Claude pour la réécrire dans ses mots.
+Huit questions, un écran final, puis la lettre assemblée à partir des réponses. Copier, imprimer en PDF, ou copier un bloc de contexte à coller dans l'assistant IA de son choix pour la réécrire dans ses mots.
 
 **« Autre » s'écrit sur place.** Sur six des huit questions, un choix « Autre » se transforme en champ de saisie au clic, curseur dedans. Ce qu'elle écrit entre tel quel dans la lettre, à l'endroit qui correspond à la question. Entrée valide.
 

@@ -863,15 +863,15 @@ function rendreResultat(){
         '<button class="btn ghost sm" id="b-recommencer">Recommencer</button>' +
       '</div>' +
       '<div class="astuce">' +
-        '<strong>Tu préfères l\'écrire dans tes mots&nbsp;?</strong> Copie le contexte ci-dessous et colle-le dans ChatGPT ou Claude — il contient tes réponses et la lettre, avec la consigne de ne rien changer aux chiffres.' +
-        '<div class="actions" style="margin-top:14px"><button class="btn ghost sm" id="b-ia">Copier le contexte pour mon IA</button></div>' +
+        '<strong>Tu préfères l\'écrire dans tes mots&nbsp;?</strong> Copie le contexte ci-dessous et colle-le dans l\'assistant d\'intelligence artificielle que tu utilises — il contient tes réponses et la lettre, avec la consigne de ne rien changer aux chiffres.' +
+        '<div class="actions" style="margin-top:14px"><button class="btn ghost sm" id="b-ia">Copier le contexte pour un assistant IA</button></div>' +
       '</div>' +
       '<p class="recap">Chiffres : sondage post-cohorte Momenta printemps 2026 (22 répondantes sur 42) · sondage d\'inscription (40 répondantes) · Randstad Canada 2024 · American Bar Association.</p>' +
     '</div></div>';
 
   document.getElementById('txt').textContent = texte;
   brancherCopie('b-copier', texte, 'Copier la lettre');
-  brancherCopie('b-ia', contexteIA(rep), 'Copier le contexte pour mon IA');
+  brancherCopie('b-ia', contexteIA(rep), 'Copier le contexte pour un assistant IA');
   document.getElementById('b-imprimer').addEventListener('click', function(){ window.print(); });
   document.getElementById('b-recommencer').addEventListener('click', function(){ location.reload(); });
 }
