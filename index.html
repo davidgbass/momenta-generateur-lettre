@@ -112,6 +112,19 @@ body{
 }
 .bascule button.actif{background:rgba(255,112,107,.18);border-color:var(--corail);font-weight:700}
 
+.pile select{
+  width:100%;font-family:inherit;font-size:16.5px;padding:14px 16px;
+  background:rgba(252,252,250,.07);color:var(--pale);
+  border:1.5px solid rgba(252,252,250,.18);border-radius:3px;
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23fcfcfa' fill-opacity='.5' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;background-size:12px;
+  padding-right:42px;
+}
+.pile select:focus{outline:none;border-color:var(--corail)}
+.pile select option{background:var(--vert);color:var(--pale)}
+.etiquette{font-size:14px;opacity:.6;margin-bottom:9px}
+
 .consent{display:flex;gap:12px;align-items:flex-start;margin-bottom:13px;cursor:pointer}
 .consent input{
   appearance:none;-webkit-appearance:none;flex-shrink:0;
@@ -443,9 +456,49 @@ var ENJEU = {
 /* ============================================================
    LES BLOCS DE TEXTE
    ============================================================ */
+/* ------------------------------------------------------------
+   LE CALENDRIER — c'est lui qui rend la logistique vraie ou fausse.
+   La cohorte va du 30 septembre 2026 au début février 2027. Selon que la
+   femme est au travail ou en congé pendant cette fenêtre, la lettre ne peut
+   pas dire la même chose. On demande donc une vraie date, pas un mois écrit
+   à la main — et on la compare aux bornes du parcours.
+   ------------------------------------------------------------ */
+var PARCOURS = {debut:'2026-09', fin:'2027-02'};
+var MOIS = ['janvier','février','mars','avril','mai','juin',
+            'juillet','août','septembre','octobre','novembre','décembre'];
+
+function moisLisible(aaaaMm){
+  if (!aaaaMm) return null;
+  var p = aaaaMm.split('-');
+  return MOIS[parseInt(p[1], 10) - 1] + ' ' + p[0];
+}
+
+/* Quelle est sa situation pendant la fenêtre du parcours ?
+   'travail'  — elle est au bureau du début à la fin
+   'conge'    — elle est en congé du début à la fin
+   'chevauche'— la fenêtre est à cheval sur les deux
+   null       — elle n'a pas donné de date, on ne présume rien */
+function situationPendantParcours(r){
+  if (r.moment === 'enceinte'){
+    var d = r.dateBascule;                       // date de son départ en congé
+    if (!d) return null;
+    if (d > PARCOURS.fin)   return 'travail';    // elle part après la fin
+    if (d <= PARCOURS.debut) return 'conge';     // déjà partie au démarrage
+    return 'chevauche';
+  }
+  if (r.moment === 'conge'){
+    var v = r.dateBascule;                       // date de son retour au travail
+    if (!v) return null;
+    if (v <= PARCOURS.debut) return 'travail';   // revenue avant le démarrage
+    if (v >= PARCOURS.fin)   return 'conge';     // encore en congé à la fin
+    return 'chevauche';
+  }
+  return 'travail';                              // déjà de retour depuis un moment
+}
+
 var OUVERTURE = {
-  enceinte:  "Je pars bientôt en congé de maternité et je reviendrai en {mois}. Je veux préparer ce retour maintenant, pas la veille.",
-  conge:     "Je suis en congé parental et je reviens en {mois}. Je veux préparer ce retour plutôt que l'improviser.",
+  enceinte:  "Je pars en congé de maternité en {mois}. Je veux préparer ce départ, et mon retour, au lieu de les improviser.",
+  conge:     "Je suis en congé parental et je reviens au travail en {mois}. Je veux préparer ce retour plutôt que l'improviser.",
   retour6:   "Je suis revenue de congé parental il y a quelques mois. Maintenant que la poussière retombe, je veux investir dans la suite.",
   retour12:  "Je suis revenue de congé parental il y a moins d'un an. Le rythme est repris, et c'est le bon moment pour travailler ce qui vient ensuite.",
   retourplus:"Cela fait plus d'un an que je suis revenue de congé parental. Ce que je veux maintenant, ce n'est pas rattraper — c'est avancer."
@@ -480,9 +533,10 @@ var GESTION = {
    pendant le parcours (30 septembre → début février). C'est même l'argument
    le plus fort pour celle qui part : ça ne coûte aucune heure de travail. */
 var LOGISTIQUE = {
-  enceinte:"Le parcours va du 30 septembre au début février. Selon la date de mon départ, une partie se fera pendant que je travaille encore — deux heures aux dix jours, sur l'heure du midi — et le reste pendant mon congé, sans aucun coût en heures de travail pour l'organisation.",
-  conge:   "Le parcours va du 30 septembre au début février : l'essentiel se déroulera donc pendant mon congé, sans coûter d'heures de travail à l'organisation. Ce qui déborde sur mon retour représente deux heures aux dix jours, sur l'heure du midi, et toutes les séances sont enregistrées.",
-  present: "Le parcours va du 30 septembre au début février : deux heures aux dix jours, sur l'heure du midi, toutes les séances enregistrées. Je ne m'absente pas de mes dossiers."
+  travail:   "Le parcours va du 30 septembre au début février : deux heures aux dix jours, sur l'heure du midi, toutes les séances enregistrées. Je ne m'absente pas de mes dossiers.",
+  conge:     "Le parcours va du 30 septembre au début février : il se déroulera donc entièrement pendant mon congé. Il ne coûte aucune heure de travail à l'organisation.",
+  chevauche: "Le parcours va du 30 septembre au début février : une partie se déroulera pendant mon congé, sans aucun coût en heures de travail. Le reste représente deux heures aux dix jours, sur l'heure du midi, avec toutes les séances enregistrées.",
+  inconnu:   "Le parcours va du 30 septembre au début février. Ce qui tombe pendant mes heures de travail représente deux heures aux dix jours, sur l'heure du midi, avec toutes les séances enregistrées."
 };
 
 var SECTEUR = {
@@ -524,13 +578,27 @@ function assembler(r){
 
   p.push("Bonjour " + r.prenomDest + ",");
 
-  /* ouverture — sa propre formulation si elle a écrit dans « Autre » */
-  var ouv = (r.moment === 'autre')
-    ? (texteAutre(r,'moment') || OUVERTURE.retour6)
-    : OUVERTURE[r.moment].replace('{mois}', r.mois);
+  /* ouverture — sa propre formulation si elle a écrit dans « Autre ».
+     Sans date choisie, on retire la mention du mois plutôt que d'inventer. */
+  var ouv;
+  if (r.moment === 'autre'){
+    ouv = texteAutre(r,'moment') || OUVERTURE.retour6;
+  } else if (r.moment === 'enceinte' || r.moment === 'conge'){
+    var lisible = moisLisible(r.dateBascule);
+    ouv = lisible
+      ? OUVERTURE[r.moment].replace('{mois}', lisible)
+      : (r.moment === 'enceinte'
+          ? "Je pars bientôt en congé de maternité. Je veux préparer ce départ, et mon retour, au lieu de les improviser."
+          : "Je suis en congé parental et mon retour approche. Je veux le préparer plutôt que l'improviser.");
+  } else {
+    ouv = OUVERTURE[r.moment];
+  }
   p.push(ouv + (CLIMAT[r.climat] || ""));
 
-  var avantRetour = (r.moment === 'enceinte' || r.moment === 'conge');
+  var situation = situationPendantParcours(r);
+  /* « avant le retour » ne dépend plus de la phase déclarée mais de la date :
+     une femme en congé qui rentre avant octobre est, pour le parcours, au travail. */
+  var avantRetour = (r.moment === 'enceinte' || r.moment === 'conge') && situation !== 'travail';
   var tempsGestion = avantRetour ? GESTION.avenir : GESTION.present;
   p.push(RECADRAGE + " " + (tempsGestion[r.gestion] || tempsGestion.non));
 
@@ -567,7 +635,7 @@ function assembler(r){
   var dem = (r.demande === 'autre')
     ? (texteAutre(r,'demande') || DEMANDE.tout)
     : ((avantRetour && DEMANDE_AVANT_RETOUR[r.demande]) || DEMANDE[r.demande]);
-  p.push(dem + " " + (LOGISTIQUE[r.moment] || LOGISTIQUE.present));
+  p.push(dem + " " + LOGISTIQUE[situation || 'inconnu']);
 
   p.push(CLOTURE[r.destinataire] || CLOTURE.autre);
   if (r.format === 'lettre') p.push("Merci de votre considération.");
@@ -743,6 +811,36 @@ function nettoyerEnjeu(cle){
 }
 
 /* ---------- écran final : la lettre + les coordonnées, calqué sur le site ---------- */
+/* Le sélecteur mois-année ne sert qu'aux deux phases où une date change
+   réellement le texte. Ailleurs, on ne le montre pas du tout. */
+function besoinDeDate(){ return rep.moment === 'enceinte' || rep.moment === 'conge'; }
+
+function selecteurDate(){
+  if (!besoinDeDate()) return '';
+  var etiquette = (rep.moment === 'enceinte')
+    ? "Quand pars-tu en congé&nbsp;?"
+    : "Quand reviens-tu au travail&nbsp;?";
+
+  var mois = '<select id="f-m"><option value="">Mois</option>';
+  for (var i = 0; i < 12; i++)
+    mois += '<option value="' + (i + 1) + '">' + MOIS[i].charAt(0).toUpperCase() + MOIS[i].slice(1) + '</option>';
+  mois += '</select>';
+
+  var an = '<select id="f-a"><option value="">Année</option>';
+  for (var y = 2026; y <= 2028; y++) an += '<option value="' + y + '">' + y + '</option>';
+  an += '</select>';
+
+  return '<p class="etiquette">' + etiquette + '</p><div class="duo">' + mois + an + '</div>';
+}
+
+function lireDate(){
+  if (!besoinDeDate()) { rep.dateBascule = null; return true; }
+  var m = document.getElementById('f-m'), a = document.getElementById('f-a');
+  if (!m || !a || !m.value || !a.value) { rep.dateBascule = null; return false; }
+  rep.dateBascule = a.value + '-' + (m.value.length === 1 ? '0' + m.value : m.value);
+  return true;
+}
+
 function rendreFinal(){
   rep.format = rep.format || 'courriel';
   scene.innerHTML =
@@ -752,10 +850,8 @@ function rendreFinal(){
 
       '<div class="bloc-titre">Ta lettre</div>' +
       '<div class="pile">' +
-        '<div class="duo">' +
-          '<input id="f-dest" type="text" placeholder="Prénom du destinataire" autocomplete="off">' +
-          '<input id="f-mois" type="text" placeholder="Mois de ton retour" autocomplete="off">' +
-        '</div>' +
+        '<input id="f-dest" type="text" placeholder="Prénom du destinataire" autocomplete="off">' +
+        selecteurDate() +
         '<div class="bascule">' +
           '<button data-f="courriel" class="actif">Un courriel</button>' +
           '<button data-f="lettre">Une lettre</button>' +
@@ -799,19 +895,29 @@ function rendreFinal(){
 
   function figerLettre(){
     rep.prenomDest = val('f-dest') || '[Prénom]';
-    rep.mois       = val('f-mois') || '[mois]';
+    lireDate();
     var nom = (val('f-prenom') + ' ' + val('f-nom')).trim();
     rep.signature  = nom || '[Ta signature]';
+  }
+
+  function dateOk(){
+    if (!besoinDeDate()) return true;
+    var m = document.getElementById('f-m'), a = document.getElementById('f-a');
+    return !!(m && a && m.value && a.value);
   }
 
   function valider(){
     var courrielOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('f-mail'));
     var telOk = val('f-tel').replace(/\D/g,'').length >= 10;
     var nomsOk = val('f-prenom').length > 1 && val('f-nom').length > 1;
-    bouton.disabled = !(courrielOk && telOk && nomsOk && kTermes.checked);
+    bouton.disabled = !(courrielOk && telOk && nomsOk && kTermes.checked && dateOk());
   }
   ['f-prenom','f-nom','f-tel','f-mail'].forEach(function(id){
     document.getElementById(id).addEventListener('input', valider);
+  });
+  ['f-m','f-a'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('change', valider);
   });
   kTermes.addEventListener('change', valider);
 
