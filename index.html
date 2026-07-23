@@ -275,33 +275,59 @@ var QUESTIONS = [
    (n=31) et post-cohorte (n=22).
    ============================================================ */
 var LIBELLES = {
-  annonce: {t:"Annoncer ma grossesse me stresse plus que ça devrait", sous:"En parler à mon employeur sans me diminuer"},
-  pause:   {t:"J'ai peur que mon congé me coûte ma progression",      sous:"Ne pas perdre le terrain que j'ai gagné"},
-  plan:    {t:"Je n'ai aucun plan pour mon retour",                   sous:"Revenir avec une structure, pas à l'aveugle"},
-  place:   {t:"Je ne me sens plus tout à fait à ma place",            sous:"Retrouver ma légitimité professionnelle"},
-  charge:  {t:"La charge mentale me gruge",                           sous:"Tenir un rôle exigeant sans m'épuiser"},
-  limites: {t:"Je n'arrive pas à faire respecter mes limites",        sous:"Poser un cadre et le tenir, sans culpabilité"},
-  avancer: {t:"Je veux continuer à avancer, pas juste tenir",         sous:"Reprendre ma progression"},
-  clarte:  {t:"Je ne sais plus trop où je m'en vais",                 sous:"Y voir clair sur ma prochaine étape"},
-  encore:  {t:"Je suis revenue depuis un bout, et ça ne va toujours pas", sous:"Ce n'est pas réglé juste parce que je suis rentrée"},
-  sens:    {t:"Je me demande si je suis encore à la bonne place",     sous:"Revalider ma trajectoire, ou la changer"},
-  reseau:  {t:"Je me sens pas mal seule là-dedans",                   sous:"Un réseau de femmes qui vivent la même chose"},
-  posture: {t:"Je gère une équipe et je ne me sens plus solide",      sous:"Retrouver ma posture de gestionnaire"},
-  pilotage:{t:"Je porte des dossiers et je n'ai plus le même souffle",sous:"Retrouver ma capacité à mener des mandats exigeants"}
+  /* — avant le départ (enceinte) — */
+  annonce:       {t:"Annoncer ma grossesse me stresse plus que ça devrait", sous:"En parler à mon employeur sans me diminuer"},
+  depart:        {t:"Je ne sais pas comment préparer mon départ",           sous:"Passer le relais sans que tout retombe sur les autres"},
+  pause:         {t:"J'ai peur que mon congé me coûte ma progression",      sous:"Ne pas perdre le terrain que j'ai gagné"},
+  relais_equipe: {t:"Je dois passer le relais de mon équipe et ça m'angoisse", sous:"Confier mon équipe sans perdre ma place"},
+  relais_projets:{t:"Je dois confier mes dossiers et je ne sais pas comment", sous:"Transférer mes mandats proprement"},
+
+  /* — pendant le congé, retour à venir — */
+  plan:          {t:"Je n'ai aucun plan pour mon retour",                   sous:"Revenir avec une structure, pas à l'aveugle"},
+  place_futur:   {t:"J'ai peur de ne plus être à ma place en revenant",     sous:"Revenir sans avoir à tout reprouver"},
+  reprise_equipe:{t:"Je vais retrouver mon équipe et je ne me sens pas solide", sous:"Reprendre mon rôle de gestionnaire avec confiance"},
+  reprise_projets:{t:"Je vais reprendre mes dossiers et je doute de mon souffle", sous:"Retrouver ma capacité à mener des mandats exigeants"},
+
+  /* — déjà de retour — */
+  place:         {t:"Je ne me sens plus tout à fait à ma place",            sous:"Retrouver ma légitimité professionnelle"},
+  charge:        {t:"La charge mentale me gruge",                           sous:"Tenir un rôle exigeant sans m'épuiser"},
+  limites:       {t:"Je n'arrive pas à faire respecter mes limites",        sous:"Poser un cadre et le tenir, sans culpabilité"},
+  encore:        {t:"Je suis revenue depuis un bout, et ça ne va toujours pas", sous:"Ce n'est pas réglé juste parce que je suis rentrée"},
+  encore_long:   {t:"Ça fait plus d'un an et ce n'est toujours pas réglé",  sous:"Ce n'est pas passé tout seul"},
+  posture:       {t:"Je gère une équipe et je ne me sens plus solide",      sous:"Retrouver ma posture de gestionnaire"},
+  pilotage:      {t:"Je porte des dossiers et je n'ai plus le même souffle",sous:"Retrouver ma capacité à mener des mandats exigeants"},
+
+  /* — transversaux — */
+  avancer:       {t:"Je veux continuer à avancer, pas juste tenir",         sous:"Reprendre ma progression"},
+  clarte:        {t:"Je ne sais plus trop où je m'en vais",                 sous:"Y voir clair sur ma prochaine étape"},
+  sens:          {t:"Je me demande si je suis encore à la bonne place",     sous:"Revalider ma trajectoire, ou la changer"},
+  reseau:        {t:"Je me sens pas mal seule là-dedans",                   sous:"Un réseau de femmes qui vivent la même chose"}
 };
 
+/* Chaque phase ne propose que ce qui peut réellement lui arriver.
+   Une femme enceinte n'est pas encore confrontée au retour ; une femme
+   revenue depuis un an n'a plus de départ à préparer. */
 var PAR_PHASE = {
-  enceinte:  ['annonce','pause','plan','avancer'],
-  conge:     ['plan','place','charge','reseau'],
+  enceinte:  ['annonce','depart','pause','avancer'],
+  conge:     ['plan','place_futur','charge','reseau'],
   retour6:   ['place','charge','limites','reseau'],
   retour12:  ['encore','clarte','place','charge'],
-  retourplus:['sens','clarte','avancer','encore']
+  retourplus:['sens','clarte','avancer','encore_long']
+};
+
+/* La responsabilité de gestion se dit à trois temps : je pars et je dois
+   passer le relais · je vais reprendre · je suis dedans en ce moment. */
+var GESTION_PAR_PHASE = {
+  enceinte: {equipe:'relais_equipe',  projets:'relais_projets',  lesdeux:'relais_equipe'},
+  conge:    {equipe:'reprise_equipe', projets:'reprise_projets', lesdeux:'reprise_equipe'},
+  present:  {equipe:'posture',        projets:'pilotage',        lesdeux:'posture'}
 };
 
 function optionsEnjeu(r){
   var liste = (PAR_PHASE[r.moment] || PAR_PHASE.retour6).slice();
-  if (r.gestion === 'equipe' || r.gestion === 'lesdeux') liste.unshift('posture');
-  else if (r.gestion === 'projets') liste.unshift('pilotage');
+  var table = GESTION_PAR_PHASE[r.moment] || GESTION_PAR_PHASE.present;
+  var ajout = table[r.gestion];
+  if (ajout) liste.unshift(ajout);
   return liste.map(function(v){ return {v:v, t:LIBELLES[v].t, sous:LIBELLES[v].sous}; });
 }
 
@@ -315,6 +341,41 @@ var ENJEU = {
     veut:"m'assurer que ce congé ne me coûte pas le terrain professionnel que j'ai gagné",
     mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
     employeur:"Ce que ça veut dire pour l'organisation : une employée qui revient au niveau où elle était partie. C'est précisément à ce moment-ci que les organisations perdent leurs candidates à la relève."
+  },
+  depart:{
+    veut:"préparer mon départ correctement, pour que la transition se fasse proprement des deux côtés",
+    mesure:"leur clarté sur leur prochaine étape professionnelle passer de 4,9 à 7,3 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : un départ planifié plutôt qu'improvisé. La continuité de mes dossiers se prépare des mois à l'avance, pas dans les deux dernières semaines."
+  },
+  relais_equipe:{
+    veut:"organiser le relais de mon équipe sans que ça se fasse au détriment de tout le monde",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : mon équipe est prise en charge de façon planifiée pendant mon absence, et je reviens en état de la reprendre."
+  },
+  relais_projets:{
+    veut:"transférer mes mandats proprement avant de partir",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : mes dossiers changent de mains de façon ordonnée, et rien ne se perd entre les deux."
+  },
+  place_futur:{
+    veut:"revenir sans avoir l'impression de devoir tout reprouver",
+    mesure:"leur confiance en leur valeur professionnelle passer de 6,6 à 8,2 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : une employée qui redevient pleinement opérationnelle en quelques semaines, plutôt qu'une reprise qui s'étire sur plusieurs mois."
+  },
+  reprise_equipe:{
+    veut:"reprendre mon rôle de gestionnaire avec la solidité que j'avais avant de partir",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : ce n'est pas seulement moi qui en bénéficie. Tout ce qui se travaille là se répercute sur les personnes que je vais gérer de nouveau."
+  },
+  reprise_projets:{
+    veut:"retrouver ma capacité à porter des mandats exigeants dès mon retour",
+    mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10",
+    employeur:"Ce que ça veut dire pour l'organisation : les dossiers que je reprends avancent au rythme prévu, plutôt qu'au rythme de ce que j'arrive à absorber."
+  },
+  encore_long:{
+    veut:"régler ce qui ne s'est pas réglé tout seul depuis mon retour",
+    mesure:"leur sentiment d'être soutenues passer de 4,3 à 8,1 sur 10 — le plus grand gain du parcours",
+    employeur:"Ce que ça veut dire pour l'organisation : au-delà d'un an, ce n'est plus de la prévention, c'est du rattrapage — et c'est encore le moment le moins cher pour agir. Une difficulté qui s'installe aussi longtemps finit rarement autrement que par un départ."
   },
   plan:{
     veut:"arriver à mon retour avec un vrai plan plutôt qu'en improvisant",
