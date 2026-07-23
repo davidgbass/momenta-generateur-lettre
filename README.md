@@ -12,6 +12,12 @@ Huit questions, un écran final, puis la lettre assemblée à partir des répons
 
 **Un seul écran de formulaire.** Les détails de la lettre et les coordonnées étaient deux formulaires consécutifs ; ils sont fusionnés, calqués sur `momentareseau.com/outils`. La signature se déduit du prénom et du nom.
 
+## Contrôle de clarté
+
+`lint-clarte.js` refuse tout libellé qui renvoie à un antécédent absent — « ce n'est toujours pas réglé » (réglé quoi ?), « là-dedans » (dans quoi ?), « la même chose » (quelle chose ?). Il exige aussi qu'un libellé fasse au moins quatre mots.
+
+Pour l'exécuter, extraire la logique du `<script>` de `index.html` vers `logique.js`, puis `node lint-clarte.js`.
+
 ## Ce qui varie dans la lettre
 
 | Question | Effet |
