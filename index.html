@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ta lettre à ton employeur — Momenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--vert:#01282b;--corail:#ff706b;--gris:#ded9d4;--creme:#f2f0eb;--pale:#fcfcfa}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--vert);color:var(--pale);line-height:1.55;font-size:17px;
+  -webkit-font-smoothing:antialiased;
+}
+.app{min-height:100%;display:flex;flex-direction:column}
+
+/* ---------- barre ---------- */
+.bar{padding:20px 24px 0;flex-shrink:0}
+.bar-inner{max-width:620px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.logo{font-weight:800;font-size:19px;letter-spacing:-.02em}
+.logo span{color:var(--corail)}
+.compte{font-size:13px;font-weight:600;opacity:.55;letter-spacing:.04em}
+.piste{max-width:620px;margin:0 auto;height:3px;background:rgba(252,252,250,.16);border-radius:2px;overflow:hidden}
+.jauge{height:100%;width:0;background:var(--corail);transition:width .32s cubic-bezier(.4,0,.2,1)}
+
+/* ---------- scène ---------- */
+.scene{flex:1;display:flex;align-items:center;padding:32px 24px 48px}
+.etape{max-width:620px;margin:0 auto;width:100%;animation:entre .34s cubic-bezier(.16,1,.3,1)}
+@keyframes entre{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.q{font-size:clamp(25px,4.6vw,34px);font-weight:800;letter-spacing:-.025em;line-height:1.18;margin-bottom:8px}
+.aide{font-size:15.5px;opacity:.62;margin-bottom:26px}
+
+.choix{display:flex;flex-direction:column;gap:9px}
+.opt{
+  width:100%;text-align:left;font-family:inherit;font-size:17px;font-weight:500;
+  background:rgba(252,252,250,.06);color:var(--pale);
+  border:1.5px solid rgba(252,252,250,.16);border-radius:3px;
+  padding:16px 20px;cursor:pointer;transition:all .13s;
+}
+.opt:hover,.opt:focus-visible{background:rgba(255,112,107,.14);border-color:var(--corail);outline:none;transform:translateX(3px)}
+.opt .sous{display:block;font-size:14px;font-weight:400;opacity:.55;margin-top:3px}
+
+.retour{
+  margin-top:26px;background:none;border:none;color:var(--pale);opacity:.45;
+  font-family:inherit;font-size:14.5px;cursor:pointer;padding:6px 0;
+}
+.retour:hover{opacity:.8}
+
+/* ---------- champs ---------- */
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.ch label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:6px}
+.ch input{
+  width:100%;font-family:inherit;font-size:17px;padding:13px 15px;
+  background:rgba(252,252,250,.07);color:var(--pale);
+  border:1.5px solid rgba(252,252,250,.18);border-radius:3px;
+}
+.ch input::placeholder{color:rgba(252,252,250,.3)}
+.ch input:focus{outline:none;border-color:var(--corail);background:rgba(252,252,250,.1)}
+
+.btn{
+  font-family:inherit;font-size:15.5px;font-weight:700;letter-spacing:.02em;
+  background:var(--corail);color:var(--vert);border:none;
+  padding:15px 30px;border-radius:3px;cursor:pointer;transition:opacity .13s;
+}
+.btn:hover{opacity:.86}
+.btn.ghost{background:none;border:1.5px solid rgba(252,252,250,.3);color:var(--pale)}
+.btn.ghost:hover{border-color:var(--pale);opacity:1}
+.btn.sm{font-size:14px;padding:11px 20px}
+
+/* ---------- résultat ---------- */
+.resultat{background:var(--creme);color:var(--vert);min-height:100%;padding:40px 24px 60px}
+.res-inner{max-width:680px;margin:0 auto}
+.res-inner h2{font-size:clamp(24px,4.2vw,32px);font-weight:800;letter-spacing:-.025em;margin-bottom:8px}
+.res-inner .sous-titre{opacity:.68;margin-bottom:26px;font-size:16.5px}
+
+.lettre{
+  background:var(--pale);border:1px solid var(--gris);padding:30px;
+  font-size:16px;line-height:1.72;white-space:pre-wrap;
+}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.actions .btn{color:var(--vert)}
+.actions .btn.ghost{border-color:var(--vert);color:var(--vert)}
+
+.astuce{
+  background:rgba(255,112,107,.1);border-left:3px solid var(--corail);
+  padding:18px 22px;margin-top:30px;font-size:15.5px;
+}
+.astuce strong{font-weight:700}
+
+.recap{margin-top:30px;font-size:14px;opacity:.6}
+.recap b{font-weight:600}
+
+@media print{
+  body{background:#fff;color:#000}
+  .bar,.scene,.actions,.astuce,.recap,.res-inner h2,.sous-titre{display:none!important}
+  .resultat{background:#fff;padding:0}
+  .lettre{border:none;padding:0;font-size:11pt}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="bar" id="bar">
+    <div class="bar-inner">
+      <div class="logo">momenta<span>.</span></div>
+      <div class="compte" id="compte"></div>
+    </div>
+    <div class="piste"><div class="jauge" id="jauge"></div></div>
+  </div>
+  <div class="scene" id="scene"></div>
+</div>
+
+<script>
+/* ============================================================
+   LES QUESTIONS
+   ============================================================ */
+var QUESTIONS = [
+  {
+    cle:'moment',
+    q:"Où en es-tu dans ta transition&nbsp;?",
+    aide:"Ça détermine comment la lettre s'ouvre.",
+    options:[
+      {v:'enceinte',  t:"Je suis enceinte"},
+      {v:'conge',     t:"Je suis en congé parental"},
+      {v:'retour6',   t:"De retour depuis moins de 6 mois"},
+      {v:'retour12',  t:"De retour depuis 6 à 12 mois"},
+      {v:'retourplus',t:"De retour depuis plus d'un an"}
+    ]
+  },
+  {
+    cle:'destinataire',
+    q:"À qui écris-tu&nbsp;?",
+    aide:"Un gestionnaire et un service RH ne réagissent pas aux mêmes arguments.",
+    options:[
+      {v:'gestionnaire',t:"Mon ou ma gestionnaire direct"},
+      {v:'rh',          t:"Les ressources humaines"},
+      {v:'lesdeux',     t:"Les deux en même temps"},
+      {v:'dirigeant',   t:"Un membre de la direction"}
+    ]
+  },
+  {
+    cle:'taille',
+    q:"Combien de personnes travaillent dans ton organisation&nbsp;?",
+    aide:"Au-delà d'une certaine taille, un levier budgétaire s'ouvre.",
+    options:[
+      {v:'petite', t:"Moins de 50"},
+      {v:'moyenne',t:"Entre 50 et 250"},
+      {v:'grande', t:"Entre 250 et 1 000"},
+      {v:'tres',   t:"Plus de 1 000"},
+      {v:'inconnu',t:"Je ne sais pas"}
+    ]
+  },
+  {
+    cle:'secteur',
+    q:"Dans quel secteur&nbsp;?",
+    aide:"Certains secteurs ont des données qui leur sont propres.",
+    options:[
+      {v:'juridique',t:"Services professionnels ou juridiques"},
+      {v:'finance',  t:"Finance ou assurance"},
+      {v:'sante',    t:"Santé et services sociaux"},
+      {v:'techno',   t:"Technologie"},
+      {v:'public',   t:"Secteur public ou municipal"},
+      {v:'education',t:"Éducation"},
+      {v:'autre',    t:"Autre"}
+    ]
+  },
+  {
+    cle:'gestion',
+    q:"As-tu des responsabilités de gestion&nbsp;?",
+    aide:"78&nbsp;% des femmes de la dernière cohorte en avaient.",
+    options:[
+      {v:'equipe', t:"Oui, je gère une équipe"},
+      {v:'projets',t:"Oui, je gère des projets", sous:"Sans équipe sous ma responsabilité"},
+      {v:'non',    t:"Non"}
+    ]
+  },
+  {
+    cle:'enjeu',
+    q:"Qu'est-ce que tu veux travailler en priorité&nbsp;?",
+    aide:"C'est ce qui sera mis en avant dans la lettre.",
+    options:[
+      {v:'posture', t:"Ma posture de gestion"},
+      {v:'clarte',  t:"Savoir où je m'en vais"},
+      {v:'charge',  t:"Tenir un rôle exigeant sans m'épuiser"},
+      {v:'confiance',t:"Ma confiance professionnelle"},
+      {v:'reseau',  t:"Ne pas traverser ça seule"}
+    ]
+  },
+  {
+    cle:'climat',
+    q:"Comment te sens-tu soutenue par ton employeur en ce moment&nbsp;?",
+    aide:"Personne ne verra ta réponse. Elle règle le ton de la lettre.",
+    options:[
+      {v:'pleinement',t:"Pleinement"},
+      {v:'partie',    t:"En partie"},
+      {v:'peu',       t:"Peu"},
+      {v:'pasdutout', t:"Pas du tout"}
+    ]
+  },
+  {
+    cle:'demande',
+    q:"Qu'est-ce que tu demandes&nbsp;?",
+    aide:"Un partage de coût est souvent un oui plus facile à donner.",
+    options:[
+      {v:'tout',   t:"Que l'organisation paie le parcours"},
+      {v:'partage',t:"Qu'on partage le coût", sous:"C'est ce que la majorité des femmes préfèrent"},
+      {v:'temps',  t:"Seulement l'accord pour le temps", sous:"Je paie moi-même"}
+    ]
+  }
+];
+
+/* ============================================================
+   LES BLOCS DE TEXTE
+   ============================================================ */
+var OUVERTURE = {
+  enceinte:  "Je pars bientôt en congé de maternité et je reviendrai en {mois}. Je veux préparer ce retour maintenant, pas la veille.",
+  conge:     "Je suis en congé parental et je reviens en {mois}. Je veux préparer ce retour plutôt que l'improviser.",
+  retour6:   "Je suis revenue de congé parental il y a quelques mois. Maintenant que la poussière retombe, je veux investir dans la suite.",
+  retour12:  "Je suis revenue de congé parental il y a moins d'un an. Le rythme est repris, et c'est le bon moment pour travailler ce qui vient ensuite.",
+  retourplus:"Cela fait plus d'un an que je suis revenue de congé parental. Ce que je veux maintenant, ce n'est pas rattraper — c'est avancer."
+};
+
+var CLIMAT = {
+  pleinement:" J'ai la chance d'être bien appuyée ici, et c'est justement pourquoi je vous en parle directement.",
+  partie:    "",
+  peu:       " Je sais que ce type de demande n'est pas courant chez nous. C'est pour ça que je l'appuie sur des chiffres plutôt que sur une impression.",
+  pasdutout: " Je sais que ce type de demande n'est pas courant chez nous. Je la formule donc sur la base de ce qui est documenté, pas d'un ressenti."
+};
+
+var RECADRAGE = "Ce n'est pas un accompagnement de retour au travail. C'est un parcours de développement du leadership de cinq mois, animé par des sommités québécoises — Sonia Lupien sur les mécanismes du stress, Lory Zéphyr sur la charge mentale, Marylise Champagne sur la légitimité professionnelle — et bâti autour d'un réseau de professionnelles qui traversent la même transition.";
+
+var GESTION = {
+  equipe: "À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets. Je fais partie de celles qui dirigent une équipe : ce qui se travaille là se répercute directement sur les personnes que je gère.",
+  projets:"À la dernière cohorte, 78 % des participantes géraient une équipe ou des projets, comme moi.",
+  non:    "À la dernière cohorte, 78 % des participantes occupaient des responsabilités de gestion. Ce n'est pas un groupe de soutien, c'est un milieu de professionnelles."
+};
+
+var SECTEUR = {
+  juridique:"Dans les services professionnels, l'enjeu est documenté : selon l'American Bar Association, les responsabilités de soins sont la première raison invoquée par les avocates qui quittent les grands cabinets — devant le niveau de stress et les heures facturables.",
+  finance:  "Dans un environnement où les heures sont longues et la pression constante, la recherche établit que la charge de travail est un facteur de risque documenté au moment du post-partum.",
+  autre:    "Au Canada, 70 % des femmes ne reçoivent aucun soutien ni accommodement particulier à leur retour de congé parental. C'est l'angle mort que ce parcours vient combler."
+};
+
+var ENJEU = {
+  posture:  {veut:"ma posture de gestion",                              mesure:"leur posture de leadership passer de 5,0 à 7,6 sur 10"},
+  clarte:   {veut:"la clarté sur la suite de ma trajectoire",           mesure:"leur clarté sur leur prochaine étape professionnelle passer de 4,9 à 7,3 sur 10"},
+  charge:   {veut:"ma capacité à tenir un rôle exigeant sans m'épuiser",mesure:"leur gestion de la charge mentale passer de 4,6 à 7,1 sur 10"},
+  confiance:{veut:"ma confiance dans ce que je vaux professionnellement",mesure:"leur confiance en leur valeur professionnelle passer de 6,6 à 8,2 sur 10"},
+  reseau:   {veut:"de ne pas traverser cette période isolée",           mesure:"leur sentiment d'être soutenues passer de 4,3 à 8,1 sur 10 — le gain le plus important du parcours"}
+};
+
+var DEMANDE = {
+  tout:   "Je vous demande de financer ma participation.",
+  partage:"Je vous propose qu'on partage le coût : l'organisation en assume une partie, moi l'autre.",
+  temps:  "Je financerai le parcours moi-même. Ce que je vous demande, c'est votre accord pour le temps."
+};
+
+var CLOTURE = {
+  gestionnaire:"Est-ce que je peux compter sur votre appui ?",
+  rh:          "Est-ce que c'est une demande que vous pouvez évaluer ?",
+  lesdeux:     "Est-ce que je peux compter sur votre appui ?",
+  dirigeant:   "Est-ce que je peux compter sur votre appui ?"
+};
+
+var LIGNE_RH = "Deux éléments qui vous concernent directement : la reconnaissance CRHA rend le parcours comptabilisable sous la loi du 1 %, et il constitue une mesure documentable de prévention des risques psychosociaux au sens de la Loi 27.";
+
+/* ============================================================
+   ASSEMBLAGE
+   ============================================================ */
+function assembler(r){
+  var p = [];
+  var grosse = (r.taille === 'moyenne' || r.taille === 'grande' || r.taille === 'tres');
+
+  p.push("Bonjour " + r.prenomDest + ",");
+
+  p.push(OUVERTURE[r.moment].replace('{mois}', r.mois) + CLIMAT[r.climat]);
+
+  p.push(RECADRAGE + " " + GESTION[r.gestion]);
+
+  p.push(SECTEUR[r.secteur] || SECTEUR.autre);
+
+  p.push("Ce que je veux travailler en priorité, c'est " + ENJEU[r.enjeu].veut +
+         ". Les participantes de la dernière cohorte ont mesuré " + ENJEU[r.enjeu].mesure +
+         ". Et 91 % d'entre elles estiment que leur organisation bénéficierait du programme.");
+
+  var calcul = "Le coût est de 1 495 $, comparé aux quelque 30 000 $ que coûte en moyenne le départ d'une employée au Canada. Le parcours est reconnu par l'Ordre des CRHA pour 14 heures de formation continue — il est admissible au budget de formation";
+  calcul += grosse ? " et se comptabilise sous la loi du 1 %." : ".";
+  p.push(calcul);
+
+  if (r.destinataire === 'rh' || r.destinataire === 'lesdeux') p.push(LIGNE_RH);
+
+  p.push(DEMANDE[r.demande] + " Le parcours va du 30 septembre au début février : deux heures aux dix jours, sur l'heure du midi, toutes les séances enregistrées. Je ne m'absente pas de mes dossiers.");
+
+  p.push(CLOTURE[r.destinataire]);
+
+  if (r.format === 'lettre') p.push("Merci de votre considération.");
+
+  p.push(r.signature);
+
+  var corps = p.join("\n\n");
+  return (r.format === 'courriel')
+    ? "Objet : Demande de financement — parcours Momenta, automne 2026\n\n" + corps
+    : corps;
+}
+
+function contexteIA(r){
+  var lib = function(cle, v){
+    var q = QUESTIONS.filter(function(x){return x.cle===cle;})[0];
+    var o = q.options.filter(function(x){return x.v===v;})[0];
+    return o ? o.t : v;
+  };
+  return "Voici le contexte. Réécris la lettre ci-dessous dans mes mots, sans changer les chiffres ni les faits.\n\n"
+    + "- Situation : " + lib('moment', r.moment) + "\n"
+    + "- Destinataire : " + lib('destinataire', r.destinataire) + "\n"
+    + "- Organisation : " + lib('taille', r.taille) + " · " + lib('secteur', r.secteur) + "\n"
+    + "- Gestion : " + lib('gestion', r.gestion) + "\n"
+    + "- Priorité : " + lib('enjeu', r.enjeu) + "\n"
+    + "- Soutien ressenti : " + lib('climat', r.climat) + "\n"
+    + "- Demande : " + lib('demande', r.demande) + "\n\n"
+    + "----- LETTRE -----\n\n" + assembler(r);
+}
+
+/* ============================================================
+   INTERFACE
+   ============================================================ */
+var rep = {}, pas = 0;
+var TOTAL = QUESTIONS.length + 1;
+var scene = document.getElementById('scene');
+var app = document.getElementById('app');
+
+function progres(){
+  document.getElementById('jauge').style.width = ((pas / TOTAL) * 100) + '%';
+  document.getElementById('compte').textContent = (pas < TOTAL) ? (pas + 1) + ' / ' + TOTAL : '';
+}
+
+function rendre(){
+  progres();
+  if (pas < QUESTIONS.length) return rendreQuestion(QUESTIONS[pas]);
+  if (pas === QUESTIONS.length) return rendreChamps();
+  return rendreResultat();
+}
+
+function rendreQuestion(Q){
+  var h = '<div class="etape"><div class="q">' + Q.q + '</div>' +
+          '<div class="aide">' + Q.aide + '</div><div class="choix">';
+  Q.options.forEach(function(o, i){
+    h += '<button class="opt" data-v="' + o.v + '">' + o.t +
+         (o.sous ? '<span class="sous">' + o.sous + '</span>' : '') + '</button>';
+  });
+  h += '</div>';
+  if (pas > 0) h += '<button class="retour">← retour</button>';
+  h += '</div>';
+  scene.innerHTML = h;
+
+  scene.querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click', function(){
+      rep[Q.cle] = b.dataset.v;
+      pas++; rendre();
+    });
+  });
+  var r = scene.querySelector('.retour');
+  if (r) r.addEventListener('click', function(){ pas--; rendre(); });
+}
+
+function rendreChamps(){
+  scene.innerHTML =
+    '<div class="etape">' +
+      '<div class="q">Les derniers détails</div>' +
+      '<div class="aide">Trois champs, et ta lettre est prête.</div>' +
+      '<div class="grille">' +
+        '<div class="ch"><label for="c-dest">Prénom du destinataire</label><input id="c-dest" type="text" placeholder="Prénom" autocomplete="off"></div>' +
+        '<div class="ch"><label for="c-mois">Mois de ton retour</label><input id="c-mois" type="text" placeholder="janvier" autocomplete="off"></div>' +
+        '<div class="ch"><label for="c-sign">Ta signature</label><input id="c-sign" type="text" placeholder="Ton nom" autocomplete="off"></div>' +
+      '</div>' +
+      '<div class="aide" style="margin-bottom:14px">Tu veux&nbsp;:</div>' +
+      '<div class="choix">' +
+        '<button class="opt" data-f="courriel">Un courriel<span class="sous">Avec une ligne d\'objet, prêt à envoyer</span></button>' +
+        '<button class="opt" data-f="lettre">Une lettre<span class="sous">Format plus formel, sans objet</span></button>' +
+      '</div>' +
+      '<button class="retour">← retour</button>' +
+    '</div>';
+
+  scene.querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click', function(){
+      rep.prenomDest = document.getElementById('c-dest').value.trim() || '[Prénom]';
+      rep.mois       = document.getElementById('c-mois').value.trim() || '[mois]';
+      rep.signature  = document.getElementById('c-sign').value.trim() || '[Ta signature]';
+      rep.format     = b.dataset.f;
+      pas++; rendre();
+    });
+  });
+  scene.querySelector('.retour').addEventListener('click', function(){ pas--; rendre(); });
+}
+
+function rendreResultat(){
+  var texte = assembler(rep);
+  document.getElementById('bar').style.display = 'none';
+  app.innerHTML =
+    '<div class="resultat"><div class="res-inner">' +
+      '<h2>Ta lettre est prête</h2>' +
+      '<p class="sous-titre">Relis-la, ajuste ce qui ne te ressemble pas, et envoie.</p>' +
+      '<div class="lettre" id="txt"></div>' +
+      '<div class="actions">' +
+        '<button class="btn" id="b-copier">Copier la lettre</button>' +
+        '<button class="btn ghost" id="b-imprimer">Imprimer / PDF</button>' +
+        '<button class="btn ghost sm" id="b-recommencer">Recommencer</button>' +
+      '</div>' +
+      '<div class="astuce">' +
+        '<strong>Tu préfères l\'écrire dans tes mots&nbsp;?</strong> Copie le contexte ci-dessous et colle-le dans ChatGPT ou Claude — il contient tes réponses et la lettre, avec la consigne de ne rien changer aux chiffres.' +
+        '<div class="actions" style="margin-top:14px"><button class="btn ghost sm" id="b-ia">Copier le contexte pour mon IA</button></div>' +
+      '</div>' +
+      '<p class="recap">Chiffres : sondage post-cohorte Momenta printemps 2026 (22 répondantes sur 42) · sondage d\'inscription (40 répondantes) · Randstad Canada 2024 · American Bar Association.</p>' +
+    '</div></div>';
+
+  document.getElementById('txt').textContent = texte;
+  brancherCopie('b-copier', texte, 'Copier la lettre');
+  brancherCopie('b-ia', contexteIA(rep), 'Copier le contexte pour mon IA');
+  document.getElementById('b-imprimer').addEventListener('click', function(){ window.print(); });
+  document.getElementById('b-recommencer').addEventListener('click', function(){ location.reload(); });
+}
+
+function brancherCopie(id, texte, libelle){
+  var btn = document.getElementById(id);
+  btn.addEventListener('click', function(){
+    var fini = function(ok){
+      btn.textContent = ok ? 'Copié ✓' : 'Sélectionne et copie à la main';
+      setTimeout(function(){ btn.textContent = libelle; }, 2200);
+    };
+    if (navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(texte).then(function(){ fini(true); }, function(){ fini(false); });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = texte; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta); fini(ok);
+    }
+  });
+}
+
+rendre();
+</script>
+</body>
+</html>
